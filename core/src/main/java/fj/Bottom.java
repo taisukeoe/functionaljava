@@ -87,11 +87,7 @@ public final class Bottom {
    * @return A function that returns the <code>toString</code> for a throwable.
    */
   public static <T extends Throwable> F<T, String> eToString() {
-    return new F<T, String>() {
-      public String f(final Throwable t) {
-        return t.toString();
-      }
-    };
+    return t -> t.toString();
   }
 
   /**
@@ -100,10 +96,6 @@ public final class Bottom {
    * @return A function that returns the <code>getMessage</code> for a throwable.
    */
   public static <T extends Throwable> F<T, String> eMessage() {
-    return new F<T, String>() {
-      public String f(final Throwable t) {
-        return t.getMessage();
-      }
-    };
+    return t -> t.getMessage();
   }
 }

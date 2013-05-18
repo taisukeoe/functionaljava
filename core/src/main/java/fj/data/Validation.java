@@ -230,11 +230,7 @@ public final class Validation<E, T> implements Iterable<T> {
    * @return The result of function application in validation.
    */
   public <A> Validation<E, A> apply(final Validation<E, F<T, A>> v) {
-    return v.bind(new F<F<T, A>, Validation<E, A>>() {
-      public Validation<E, A> f(final F<T, A> f) {
-        return map(f);
-      }
-    });
+    return v.bind(f -> map(f));
   }
 
   /**
@@ -354,11 +350,9 @@ public final class Validation<E, T> implements Iterable<T> {
    *         <code>None</code>.
    */
   public <A> Option<E> accumulate(final Semigroup<E> s, final Validation<E, A> va) {
-    return accumulate(s, va, new F2<T, A, Unit>() {
-      public Unit f(final T t, final A a) {
-        return unit();
-      }
-    }).f().toOption();
+    return accumulate(s, va, (t, a) ->
+      unit()
+    ).f().toOption();
   }
 
   /**
@@ -1179,7 +1173,7 @@ public final class Validation<E, T> implements Iterable<T> {
   }
 
   /**
-   * A function that parses a string into a short. 
+   * A function that parses a string into a short.
    */
   public static final F<String, Validation<NumberFormatException, Short>> parseShort = new F<String, Validation<NumberFormatException, Short>>() {
     public Validation<NumberFormatException, Short> f(final String s) {

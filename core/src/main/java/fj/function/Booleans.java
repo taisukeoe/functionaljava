@@ -42,20 +42,14 @@ public final class Booleans {
   /**
    * Logical negation.
    */
-  public static final F<Boolean, Boolean> not = new F<Boolean, Boolean>() {
-    public Boolean f(final Boolean p) {
-      return !p;
-    }
-  };
+  public static final F<Boolean, Boolean> not = p -> !p;
 
   /**
    * Curried form of logical "only if" (material implication).
    */
-  public static final F<Boolean, F<Boolean, Boolean>> implies = curry(new F2<Boolean, Boolean, Boolean>() {
-    public Boolean f(final Boolean p, final Boolean q) {
-      return !p || q;
-    }
-  });
+  public static final F<Boolean, F<Boolean, Boolean>> implies = curry(
+    (p, q) -> !p || q
+  );
 
   /**
    * Curried form of logical "if" (reverse material implication).
@@ -139,10 +133,8 @@ public final class Booleans {
    * @return A function that returns its second argument if the first argument is true, otherwise the third argument.
    */
   public static <A> F<Boolean, F<A, F<A, A>>> cond() {
-    return curry(new F3<Boolean, A, A, A>() {
-      public A f(final Boolean p, final A a1, final A a2) {
-        return p ? a1 : a2;
-      }
-    });
+    return curry(
+      (p, a1, a2) -> p ? a1 : a2
+    );
   }
 }

@@ -33,16 +33,10 @@ import fj.data.Iteratee.IterV;
  * @param <A> the type of the result produced by the wrapped iteratee
  */
 public abstract class IO<A> {
-  
+
   private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
-  public static final F<Reader, IO<Unit>> closeReader =
-    new F<Reader, IO<Unit>>() {
-      @Override
-      public IO<Unit> f(final Reader r) {
-        return closeReader(r);
-      }
-    };
+  public static final F<Reader, IO<Unit>> closeReader = r -> closeReader(r);
 
   public static IO<Unit> closeReader(final Reader r) {
     return new IO<Unit>() {
@@ -59,7 +53,7 @@ public abstract class IO<A> {
    * lines to the provided iteratee. May not be suitable for files with very long
    * lines, consider to use {@link #enumFileCharChunks(File, IterV)} or {@link #enumFileChars(File, IterV)}
    * as an alternative.
-   * 
+   *
    * @param f the file to read, must not be <code>null</code>
    * @param encoding the encoding to use, {@link Option#none()} means platform default
    * @param i the iteratee that is fed with lines read from the file
@@ -72,7 +66,7 @@ public abstract class IO<A> {
 
   /**
    * An IO monad that reads char chunks from the given file and passes them to the given iteratee.
-   * 
+   *
    * @param f the file to read, must not be <code>null</code>
    * @param encoding the encoding to use, {@link Option#none()} means platform default
    * @param i the iteratee that is fed with char chunks read from the file
@@ -85,7 +79,7 @@ public abstract class IO<A> {
 
   /**
    * An IO monad that reads char chunks from the given file and passes single chars to the given iteratee.
-   * 
+   *
    * @param f  the file to read, must not be <code>null</code>
    * @param encoding  the encoding to use, {@link Option#none()} means platform default
    * @param i the iteratee that is fed with chars read from the file
@@ -97,11 +91,7 @@ public abstract class IO<A> {
   }
 
   public static IO<BufferedReader> bufferedReader(final File f, final Option<Charset> encoding) {
-    return fileReader(f, encoding).map(new F<Reader, BufferedReader>() {
-      @Override
-      public BufferedReader f(final Reader a) {
-        return new BufferedReader(a);
-      }});
+    return fileReader(f, encoding).map(a -> new BufferedReader(a));
   }
 
   public static IO<Reader> fileReader(final File f, final Option<Charset> encoding) {
@@ -211,7 +201,7 @@ public abstract class IO<A> {
             return new IO<Iteratee.IterV<char[], A>>() {
               @Override
               public IterV<char[], A> run() throws IOException {
-                
+
                 IterV<char[], A> i = it;
                 while (!isDone.f(i)) {
                   char[] buffer = new char[DEFAULT_BUFFER_SIZE];
@@ -262,7 +252,7 @@ public abstract class IO<A> {
             return new IO<Iteratee.IterV<Character, A>>() {
               @Override
               public IterV<Character, A> run() throws IOException {
-                
+
                 IterV<Character, A> i = it;
                 while (!isDone.f(i)) {
                   char[] buffer = new char[DEFAULT_BUFFER_SIZE];

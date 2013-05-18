@@ -125,7 +125,7 @@ public abstract class Set<A> implements Iterable<A> {
              public P2<Boolean, Set<A>> f(final A a2) {
                return P.p(true, delete(a).insert(a2));
              }
-           }, Function.<P2<Boolean, Set<A>>>identity());
+           }, Function.identity());
   }
 
   private Either<A, P2<Boolean, Set<A>>> tryUpdate(final A a, final F<A, A> f) {
@@ -140,8 +140,8 @@ public abstract class Set<A> implements Iterable<A> {
     else if (ord.eq(a, head())) {
       final A h = f.f(head());
       return ord.eq(head(), h) ? Either
-          .<A, P2<Boolean, Set<A>>>right(P.p(true, (Set<A>) new Tree<A>(ord, color(), l(), h, r())))
-                               : Either.<A, P2<Boolean, Set<A>>>left(h);
+          .right(P.p(true, (Set<A>) new Tree<A>(ord, color(), l(), h, r())))
+                               : Either.left(h);
     } else return r().tryUpdate(a, f).right().map(new F<P2<Boolean, Set<A>>, P2<Boolean, Set<A>>>() {
       public P2<Boolean, Set<A>> f(final P2<Boolean, Set<A>> set) {
         return set._1() ? P.p(true, (Set<A>) new Tree<A>(ord, color(), l(), head(), set._2())) : set;
@@ -286,7 +286,7 @@ public abstract class Set<A> implements Iterable<A> {
    * @return a list representation of this set.
    */
   public final List<A> toList() {
-    return foldMap(List.cons(List.<A>nil()), Monoid.<A>listMonoid());
+    return foldMap(List.cons(List.nil()), Monoid.listMonoid());
   }
 
   /**
@@ -295,7 +295,7 @@ public abstract class Set<A> implements Iterable<A> {
    * @return a stream representation of this set.
    */
   public final Stream<A> toStream() {
-    return foldMap(Stream.<A>single(), Monoid.<A>streamMonoid());
+    return foldMap(Stream.single(), Monoid.streamMonoid());
   }
 
   /**
@@ -318,10 +318,10 @@ public abstract class Set<A> implements Iterable<A> {
   public final Set<A> union(final Set<A> s) {
     return iterableSet(ord, s.toStream().append(toStream()));
   }
-  
+
   /**
    * A first class function for {@link #union(Set)}.
-   * 
+   *
    * @return A function that adds all the elements of one set to another set.
    * @see #union(Set)
    */
@@ -376,10 +376,10 @@ public abstract class Set<A> implements Iterable<A> {
   public final Set<A> intersect(final Set<A> s) {
     return filter(Set.<A>member().f(s));
   }
-  
+
   /**
    * A first class function for {@link #intersect(Set)}.
-   * 
+   *
    * @return A function that intersects two given sets.
    * @see #intersect(Set)
    */
@@ -400,10 +400,10 @@ public abstract class Set<A> implements Iterable<A> {
   public final Set<A> minus(final Set<A> s) {
     return filter(compose(not, Set.<A>member().f(s)));
   }
-  
+
   /**
    * A first class function for {@link #minus(Set)}.
-   * 
+   *
    * @return A function that removes all elements of one set from another set.
    * @see #minus(Set)
    */
@@ -440,7 +440,7 @@ public abstract class Set<A> implements Iterable<A> {
    */
   public final P3<Set<A>, Option<A>, Set<A>> split(final A a) {
     if (isEmpty())
-      return P.p(empty(ord), Option.<A>none(), empty(ord));
+      return P.p(empty(ord), Option.none(), empty(ord));
     else {
       final A h = head();
       final Ordering i = ord.compare(a, h);
@@ -478,8 +478,7 @@ public abstract class Set<A> implements Iterable<A> {
    * @return A new set which is the join of the given set of sets.
    */
   public static <A> Set<A> join(final Ord<A> o, final Set<Set<A>> s) {
-    final F<Set<A>, Set<A>> id = identity();
-    return s.foldMap(id, Monoid.<A>setMonoid(o));
+    return s.foldMap(identity(), Monoid.setMonoid(o));
   }
 
   /**

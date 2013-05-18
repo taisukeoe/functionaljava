@@ -10,7 +10,8 @@ import java.util.concurrent.Callable;
 /**
  * The DB monad represents a database action, or a value within the context of a database connection.
  */
-public abstract class DB<A> {
+@FunctionalInterface
+public interface DB<A> {
 
   /**
    * Executes the database action, given a database connection.
@@ -28,11 +29,7 @@ public abstract class DB<A> {
    * @return A database action representing the given function.
    */
   public static <A> DB<A> db(final F<Connection, A> f) {
-    return new DB<A>() {
-      public A run(final Connection c) {
-        return f.f(c);
-      }
-    };
+    return c -> f.f(c);
   }
 
   /**
@@ -40,16 +37,8 @@ public abstract class DB<A> {
    *
    * @return The callable-valued function which is isomorphic to this database action.
    */
-  public final F<Connection, Callable<A>> asFunction() {
-    return new F<Connection, Callable<A>>() {
-      public Callable<A> f(final Connection c) {
-        return new Callable<A>() {
-          public A call() throws Exception {
-            return run(c);
-          }
-        };
-      }
-    };
+  public default F<Connection, Callable<A>> asFunction() {
+    return c -> () -> run(c);
   }
 
   /**
@@ -58,12 +47,8 @@ public abstract class DB<A> {
    * @param f The function to map over the result.
    * @return A new database action that applies the given function to the result of this action.
    */
-  public final <B> DB<B> map(final F<A, B> f) {
-    return new DB<B>() {
-      public B run(final Connection c) throws SQLException {
-        return f.f(DB.this.run(c));
-      }
-    };
+  public default <B> DB<B> map(final F<A, B> f) {
+    return c -> f.f(DB.this.run(c));
   }
 
   /**
@@ -73,11 +58,7 @@ public abstract class DB<A> {
    * @return A function equivalent to the given one, which operates on values in the database.
    */
   public static <A, B> F<DB<A>, DB<B>> liftM(final F<A, B> f) {
-    return new F<DB<A>, DB<B>>() {
-      public DB<B> f(final DB<A> a) {
-        return a.map(f);
-      }
-    };
+    return a -> a.map(f);
   }
 
   /**
@@ -87,11 +68,7 @@ public abstract class DB<A> {
    * @return A new database action that returns the given value.
    */
   public static <A> DB<A> unit(final A a) {
-    return new DB<A>() {
-      public A run(final Connection c) {
-        return a;
-      }
-    };
+    return c -> a;
   }
 
   /**
@@ -100,12 +77,8 @@ public abstract class DB<A> {
    * @param f The function to bind across the result of this database action.
    * @return A new database action equivalent to applying the given function to the result of this action.
    */
-  public final <B> DB<B> bind(final F<A, DB<B>> f) {
-    return new DB<B>() {
-      public B run(final Connection c) throws SQLException {
-        return f.f(DB.this.run(c)).run(c);
-      }
-    };
+  public default <B> DB<B> bind(final F<A, DB<B>> f) {
+    return c -> f.f(DB.this.run(c)).run(c);
   }
 
   /**
@@ -115,6 +88,6 @@ public abstract class DB<A> {
    * @return A new database action equivalent to the result of the given action.
    */
   public static <A> DB<A> join(final DB<DB<A>> a) {
-    return a.bind(Function.<DB<A>>identity());
+    return a.bind(Function.identity());
   }
 }

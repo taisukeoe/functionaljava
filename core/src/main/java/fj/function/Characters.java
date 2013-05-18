@@ -12,36 +12,26 @@ public final class Characters {
   private Characters() {
     throw new UnsupportedOperationException();
   }
-  public static final F<Character, String> toString = new F<Character, String>() {
-    public String f(final Character c) {return Character.toString(c);}
-  };
-  public static final F<Character, Boolean> isLowerCase = new F<Character, Boolean>() {
-    public Boolean f(final Character ch) {return Character.isLowerCase(ch);}
-  };
-  public static final F<Character, Boolean> isUpperCase = new F<Character, Boolean>() {
-    public Boolean f(final Character ch) {return Character.isUpperCase(ch);}
-  };
-  public static final F<Character, Boolean> isTitleCase = new F<Character, Boolean>() {
-    public Boolean f(final Character ch) {return Character.isTitleCase(ch);}
-  };
-  public static final F<Character, Boolean> isDigit = new F<Character, Boolean>() {
-    public Boolean f(final Character ch) {return Character.isDigit(ch);}
-  };
-  public static final F<Character, Boolean> isDefined = new F<Character, Boolean>() {
-    public Boolean f(final Character ch) {return Character.isDefined(ch);}
-  };
-  public static final F<Character, Boolean> isLetter = new F<Character, Boolean>() {
-    public Boolean f(final Character ch) {return Character.isLetter(ch);}
-  };
-  public static final F<Character, Boolean> isLetterOrDigit = new F<Character, Boolean>() {
-    public Boolean f(final Character ch) {return Character.isLetterOrDigit(ch);}
-  };
-  public static final F<Character, Boolean> isJavaIdentifierStart = new F<Character, Boolean>() {
-    public Boolean f(final Character ch) {return Character.isJavaIdentifierStart(ch);}
-  };
-  public static final F<Character, Boolean> isJavaIdentifierPart = new F<Character, Boolean>() {
-    public Boolean f(final Character ch) {return Character.isJavaIdentifierPart(ch);}
-  };
+  public static final F<Character, String> toString = c -> Character.toString(c);
+
+  public static final F<Character, Boolean> isLowerCase = Character::isLowerCase;
+
+  public static final F<Character, Boolean> isUpperCase = Character::isUpperCase;
+
+  public static final F<Character, Boolean> isTitleCase = Character::isTitleCase;
+
+  public static final F<Character, Boolean> isDigit = Character::isDigit;
+
+  public static final F<Character, Boolean> isDefined = Character::isDefined;
+
+  public static final F<Character, Boolean> isLetter = Character::isLetter;
+
+  public static final F<Character, Boolean> isLetterOrDigit = Character::isLetterOrDigit;
+
+  public static final F<Character, Boolean> isJavaIdentifierStart = Character::isJavaIdentifierStart;
+
+  public static final F<Character, Boolean> isJavaIdentifierPart = ch -> Character.isJavaIdentifierPart(ch);
+
   public static final F<Character, Boolean> isUnicodeIdentifierStart = new F<Character, Boolean>() {
     public Boolean f(final Character ch) {return Character.isUnicodeIdentifierStart(ch);}
   };
@@ -89,5 +79,5 @@ public final class Characters {
   };
   public static final F<Character, Boolean> isNewLine = new F<Character, Boolean>() {
     public Boolean f(final Character c) { return c == '\n'; }
-  };  
+  };
 }

@@ -90,11 +90,7 @@ public final class Promise<A> {
    * @return A function that, given a 1-product, yields a promise of that product's value.
    */
   public static <A> F<P1<A>, Promise<A>> promise(final Strategy<Unit> s) {
-    return new F<P1<A>, Promise<A>>() {
-      public Promise<A> f(final P1<A> a) {
-        return promise(s, a);
-      }
-    };
+    return a -> promise(s, a);
   }
 
   /**
@@ -121,11 +117,7 @@ public final class Promise<A> {
    * @return The given function transformed into a function that returns a promise.
    */
   public static <A, B> F<A, Promise<B>> promise(final Strategy<Unit> s, final F<A, B> f) {
-    return new F<A, Promise<B>>() {
-      public Promise<B> f(final A a) {
-        return promise(s, P1.curry(f).f(a));
-      }
-    };
+    return a -> promise(s, P1.curry(f).f(a));
   }
 
   /**
@@ -154,11 +146,7 @@ public final class Promise<A> {
    * @return That function lifted to a function on Promises.
    */
   public static <A, B> F<Promise<A>, Promise<B>> fmap_(final F<A, B> f) {
-    return new F<Promise<A>, Promise<B>>() {
-      public Promise<B> f(final Promise<A> a) {
-        return a.fmap(f);
-      }
-    };
+    return a -> a.fmap(f);
   }
 
   /**
@@ -169,8 +157,7 @@ public final class Promise<A> {
    * @return The promised promise.
    */
   public static <A> Promise<A> join(final Promise<Promise<A>> p) {
-    final F<Promise<A>, Promise<A>> id = identity();
-    return p.bind(id);
+    return p.bind(identity());
   }
 
   /**
@@ -210,11 +197,7 @@ public final class Promise<A> {
    * @return A new promise after applying the given promised function to this promise.
    */
   public <B> Promise<B> apply(final Promise<F<A, B>> pf) {
-    return pf.bind(new F<F<A, B>, Promise<B>>() {
-      public Promise<B> f(final F<A, B> f) {
-        return fmap(f);
-      }
-    });
+    return pf.bind(f -> fmap(f));
   }
 
   /**
@@ -246,11 +229,7 @@ public final class Promise<A> {
    * @return A function of arity-2 promoted to map over promises.
    */
   public static <A, B, C> F<Promise<A>, F<Promise<B>, Promise<C>>> liftM2(final F<A, F<B, C>> f) {
-    return curry(new F2<Promise<A>, Promise<B>, Promise<C>>() {
-      public Promise<C> f(final Promise<A> ca, final Promise<B> cb) {
-        return ca.bind(cb, f);
-      }
-    });
+    return curry((ca, cb) -> ca.bind(cb, f));
   }
 
   /**
@@ -271,11 +250,7 @@ public final class Promise<A> {
    * @return A function that turns a list of promises into a single promise of a list.
    */
   public static <A> F<List<Promise<A>>, Promise<List<A>>> sequence(final Strategy<Unit> s) {
-    return new F<List<Promise<A>>, Promise<List<A>>>() {
-      public Promise<List<A>> f(final List<Promise<A>> as) {
-        return sequence(s, as);
-      }
-    };
+    return as -> sequence(s, as);
   }
 
   /**

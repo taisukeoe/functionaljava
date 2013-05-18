@@ -40,20 +40,12 @@ public final class Longs {
   /**
    * Negation.
    */
-  public static final F<Long, Long> negate = new F<Long, Long>() {
-    public Long f(final Long x) {
-      return x * -1L;
-    }
-  };
+  public static final F<Long, Long> negate = x -> x * -1L;
 
   /**
    * Absolute value.
    */
-  public static final F<Long, Long> abs = new F<Long, Long>() {
-    public Long f(final Long x) {
-      return abs(x);
-    }
-  };
+  public static final F<Long, Long> abs = x -> abs(x);
 
   /**
    * Remainder.

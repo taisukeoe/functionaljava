@@ -6,4 +6,4 @@ lib_managed
 
 .idea/ant.xml
 .idea/workspace.xml
-
+*.swp

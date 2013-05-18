@@ -61,7 +61,7 @@ public final class HashMap<K, V> implements Iterable<K> {
    * @param h The hashing strategy.
    */
   public HashMap(final Equal<K> e, final Hash<K> h) {
-    m = new java.util.HashMap<Key<K>, V>();
+    m = new java.util.HashMap<>();
     this.e = e;
     this.h = h;
   }
@@ -81,13 +81,13 @@ public final class HashMap<K, V> implements Iterable<K> {
    * @param initialCapacity The initial capacity.
    */
   public HashMap(final Equal<K> e, final Hash<K> h, final int initialCapacity) {
-    m = new java.util.HashMap<Key<K>, V>(initialCapacity);
+    m = new java.util.HashMap<>(initialCapacity);
     this.e = e;
     this.h = h;
   }
 
     public HashMap(java.util.Map<K, V> map) {
-        this(map, Equal.<K>anyEqual(), Hash.<K>anyHash());
+        this(map, Equal.anyEqual(), Hash.anyHash());
     }
 
     /**
@@ -99,7 +99,7 @@ public final class HashMap<K, V> implements Iterable<K> {
    * @param loadFactor      The load factor.
    */
   public HashMap(final Equal<K> e, final Hash<K> h, final int initialCapacity, final float loadFactor) {
-    m = new java.util.HashMap<Key<K>, V>(initialCapacity, loadFactor);
+    m = new java.util.HashMap<>(initialCapacity, loadFactor);
     this.e = e;
     this.h = h;
   }
@@ -143,7 +143,7 @@ public final class HashMap<K, V> implements Iterable<K> {
    * @return A potential value for the given key.
    */
   public Option<V> get(final K k) {
-    return fromNull(m.get(new Key<K>(k, e, h)));
+    return fromNull(m.get(new Key<>(k, e, h)));
   }
 
   /**
@@ -152,11 +152,7 @@ public final class HashMap<K, V> implements Iterable<K> {
    * @return A curried version of {@link #get(Object)}.
    */
   public F<K, Option<V>> get() {
-    return new F<K, Option<V>>() {
-      public Option<V> f(final K k) {
-        return get(k);
-      }
-    };
+    return k -> get(k);
   }
 
   /**
@@ -182,7 +178,7 @@ public final class HashMap<K, V> implements Iterable<K> {
    * @return All key entries in this hash map.
    */
   public List<K> keys() {
-    final List.Buffer<K> b = new List.Buffer<K>();
+    final List.Buffer<K> b = new List.Buffer<>();
 
     for (final Key<K> k : m.keySet()) {
       b.snoc(k.k());
@@ -197,11 +193,9 @@ public final class HashMap<K, V> implements Iterable<K> {
    * @return All values in this hash map.
    */
   public List<V> values() {
-    return keys().map(new F<K, V>() {
-      public V f(final K k) {
-        return m.get(new Key<K>(k, e, h));
-      }
-    });
+    return keys().map(k ->
+      m.get(new Key<K>(k, e, h))
+    );
   }
 
   /**
@@ -256,7 +250,7 @@ public final class HashMap<K, V> implements Iterable<K> {
   public <A, B> HashMap<A, B> map(F<K, A> keyFunction,
                                   F<V, B> valueFunction,
                                   Equal<A> equal, Hash<A> hash) {
-    final HashMap<A, B> hashMap = new HashMap<A, B>(equal, hash);
+    final HashMap<A, B> hashMap = new HashMap<>(equal, hash);
     for (K key : keys()) {
       final A newKey = keyFunction.f(key);
       final B newValue = valueFunction.f(get(key).some());
@@ -267,7 +261,7 @@ public final class HashMap<K, V> implements Iterable<K> {
 
   public <A, B> HashMap<A, B> map(F<K, A> keyFunction,
                                   F<V, B> valueFunction) {
-    return map(keyFunction, valueFunction, Equal.<A>anyEqual(), Hash.<A>anyHash());
+    return map(keyFunction, valueFunction, Equal.anyEqual(), Hash.<A>anyHash());
   }
 
   public <A, B> HashMap<A, B> map(F<P2<K, V>, P2<A, B>> function, Equal<A> equal, Hash<A> hash) {
@@ -279,11 +273,11 @@ public final class HashMap<K, V> implements Iterable<K> {
   }
 
   public <A> HashMap<A, V> mapKeys(F<K, A> keyFunction, Equal<A> equal, Hash<A> hash) {
-    return map(keyFunction, Function.<V>identity(), equal, hash);
+    return map(keyFunction, Function.identity(), equal, hash);
   }
 
   public <A> HashMap<A, V> mapKeys(F<K, A> function) {
-    return mapKeys(function, Equal.<A>anyEqual(), Hash.<A>anyHash());
+    return mapKeys(function, Equal.anyEqual(), Hash.anyHash());
   }
 
   public <B> HashMap<K, B> mapValues(F<V, B> function) {
@@ -299,11 +293,9 @@ public final class HashMap<K, V> implements Iterable<K> {
   }
 
   public List<P2<K, V>> toList() {
-    return keys().map(new F<K, P2<K, V>>() {
-      public P2<K, V> f(final K k) {
-        return p(k, get(k).some());
-      }
-    });
+    return keys().map(k ->
+      p(k, get(k).some())
+    );
   }
 
   /**
@@ -328,7 +320,7 @@ public final class HashMap<K, V> implements Iterable<K> {
   }
 
   public java.util.Map<K, V> toMap() {
-    final java.util.HashMap<K,V> result = new java.util.HashMap<K, V>();
+    final java.util.HashMap<K,V> result = new java.util.HashMap<>();
     for (K key : keys()) {
       result.put(key, get(key).some());
     }
@@ -340,7 +332,7 @@ public final class HashMap<K, V> implements Iterable<K> {
   }
 
   public static <K, V> HashMap<K, V> from(Iterable<P2<K, V>> entries, Equal<K> equal, Hash<K> hash) {
-    final HashMap<K, V> map = new HashMap<K, V>(equal, hash);
+    final HashMap<K, V> map = new HashMap<>(equal, hash);
     for (P2<K, V> entry : entries) {
         map.set(entry._1(), entry._2());
     }

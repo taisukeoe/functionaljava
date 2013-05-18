@@ -132,11 +132,7 @@ public final class Monoid<A> {
    * @return a function that sums the given values with left-fold.
    */
   public F<List<A>, A> sumLeft() {
-    return new F<List<A>, A>() {
-      public A f(final List<A> as) {
-        return sumLeft(as);
-      }
-    };
+    return as -> sumLeft(as);
   }
 
   /**
@@ -145,11 +141,7 @@ public final class Monoid<A> {
    * @return a function that sums the given values with right-fold.
    */
   public F<List<A>, A> sumRight() {
-    return new F<List<A>, A>() {
-      public A f(final List<A> as) {
-        return sumRight(as);
-      }
-    };
+    return as -> sumRight(as);
   }
 
   /**
@@ -158,11 +150,7 @@ public final class Monoid<A> {
    * @return a function that sums the given values with left-fold.
    */
   public F<Stream<A>, A> sumLeftS() {
-    return new F<Stream<A>, A>() {
-      public A f(final Stream<A> as) {
-        return sumLeft(as);
-      }
-    };
+    return as -> sumLeft(as);
   }
 
   /**

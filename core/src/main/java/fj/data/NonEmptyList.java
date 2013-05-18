@@ -87,12 +87,10 @@ public final class NonEmptyList<A> implements Iterable<A> {
     final NonEmptyList<B> p = f.f(head);
     b.snoc(p.head);
     b.append(p.tail);
-    tail.foreach(new Effect<A>() {
-      public void e(final A a) {
-        final NonEmptyList<B> p = f.f(a);
-        b.snoc(p.head);
-        b.append(p.tail);
-      }
+    tail.foreach(a -> {
+      final NonEmptyList<B> l = f.f(a);
+      b.snoc(l.head);
+      b.append(l.tail);
     });
     final List<B> bb = b.toList();
     return nel(bb.head(), bb.tail());
@@ -120,11 +118,9 @@ public final class NonEmptyList<A> implements Iterable<A> {
    * @return A NonEmptyList of the tails of this list.
    */
   public NonEmptyList<NonEmptyList<A>> tails() {
-    return fromList(somes(toList().tails().map(new F<List<A>, Option<NonEmptyList<A>>>() {
-      public Option<NonEmptyList<A>> f(final List<A> list) {
-        return fromList(list);
-      }
-    }))).some();
+    return fromList(somes(toList().tails().map(
+      list -> fromList(list)
+    ))).some();
   }
 
   /**
@@ -161,11 +157,7 @@ public final class NonEmptyList<A> implements Iterable<A> {
    * @return A function that takes a non-empty list to a list.
    */
   public static <A> F<NonEmptyList<A>, List<A>> toList_() {
-    return new F<NonEmptyList<A>, List<A>>() {
-      public List<A> f(final NonEmptyList<A> as) {
-        return as.toList();
-      }
-    };
+    return as -> as.toList();
   }
 
   /**
@@ -195,11 +187,7 @@ public final class NonEmptyList<A> implements Iterable<A> {
    * @return A function that puts an element into a non-empty list.
    */
   public static <A> F<A, NonEmptyList<A>> nel() {
-    return new F<A, NonEmptyList<A>>() {
-      public NonEmptyList<A> f(final A a) {
-        return nel(a);
-      }
-    };
+    return a -> nel(a);
   }
 
   /**

@@ -15,7 +15,7 @@ import fj.data.fingertrees.Measured;
  */
 public final class Seq<A> {
   private static <A> MakeTree<Integer, A> mkTree() {
-    return FingerTree.mkTree(Seq.<A>elemMeasured());
+    return FingerTree.mkTree(Seq.elemMeasured());
   }
 
   private final FingerTree<Integer, A> ftree;
@@ -25,7 +25,7 @@ public final class Seq<A> {
   }
 
   private static <A> Measured<Integer, A> elemMeasured() {
-    return measured(intAdditionMonoid, Function.<A, Integer>constant(1));
+    return measured(intAdditionMonoid, Function.constant(1));
   }
 
   /**
@@ -34,7 +34,7 @@ public final class Seq<A> {
    * @return A sequence with no elements.
    */
   public static <A> Seq<A> empty() {
-    return new Seq<A>(Seq.<A>mkTree().empty());
+    return new Seq<>(Seq.<A>mkTree().empty());
   }
 
   /**
@@ -44,7 +44,7 @@ public final class Seq<A> {
    * @return A new sequence with the given element in it.
    */
   public static <A> Seq<A> single(final A a) {
-    return new Seq<A>(Seq.<A>mkTree().single(a));
+    return new Seq<>(Seq.<A>mkTree().single(a));
   }
 
   /**
@@ -54,7 +54,7 @@ public final class Seq<A> {
    * @return A new sequence with the given element at the front.
    */
   public Seq<A> cons(final A a) {
-    return new Seq<A>(ftree.cons(a));
+    return new Seq<>(ftree.cons(a));
   }
 
   /**
@@ -64,7 +64,7 @@ public final class Seq<A> {
    * @return A new sequence with the given element at the end.
    */
   public Seq<A> snoc(final A a) {
-    return new Seq<A>(ftree.snoc(a));
+    return new Seq<>(ftree.snoc(a));
   }
 
   /**
@@ -74,7 +74,7 @@ public final class Seq<A> {
    * @return A new sequence with the given sequence appended to this one.
    */
   public Seq<A> append(final Seq<A> as) {
-    return new Seq<A>(ftree.append(as.ftree));
+    return new Seq<>(ftree.append(as.ftree));
   }
 
   /**

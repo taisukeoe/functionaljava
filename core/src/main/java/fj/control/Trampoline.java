@@ -49,15 +49,9 @@ public abstract class Trampoline<A> {
     // The monadic bind constructs a new Codense whose subcomputation is still `sub`, and Kleisli-composes the
     // continuations.
     public <B> Trampoline<B> bind(final F<A, Trampoline<B>> f) {
-      return codense(sub, new F<Object, Trampoline<B>>() {
-        public Trampoline<B> f(final Object o) {
-          return suspend(new P1<Trampoline<B>>() {
-            public Trampoline<B> _1() {
-              return cont.f(o).bind(f);
-            }
-          });
-        }
-      });
+      return codense(sub, o ->
+        suspend(() -> cont.f(o).bind(f))
+      );
     }
 
     // The resumption of a Codense is the resumption of its subcomputation. If that computation is done, its result
@@ -69,15 +63,9 @@ public abstract class Trampoline<A> {
                 public Trampoline<A> f(final Trampoline<Object> ot) {
                   return ot.fold(new F<Normal<Object>, Trampoline<A>>() {
                         public Trampoline<A> f(final Normal<Object> o) {
-                          return o.foldNormal(new F<Object, Trampoline<A>>() {
-                                public Trampoline<A> f(final Object o) {
-                                  return cont.f(o);
-                                }
-                              }, new F<P1<Trampoline<Object>>, Trampoline<A>>() {
-                            public Trampoline<A> f(final P1<Trampoline<Object>> t) {
-                              return t._1().bind(cont);
-                            }
-                          }
+                          return o.foldNormal(
+                            oo ->  cont.f(oo)
+                            , t -> t._1().bind(cont)
                           );
                         }
                       }, new F<Codense<Object>, Trampoline<A>>() {

@@ -47,7 +47,7 @@ public final class Hash<A> {
    * @return A new hash.
    */
   public <B> Hash<B> comap(final F<B, A> g) {
-    return new Hash<B>(compose(f, g));
+    return new Hash<>(compose(f, g));
   }
 
   /**
@@ -57,7 +57,7 @@ public final class Hash<A> {
    * @return A hash that uses the given function.
    */
   public static <A> Hash<A> hash(final F<A, Integer> f) {
-    return new Hash<A>(f);
+    return new Hash<>(f);
   }
 
   /**
@@ -66,11 +66,7 @@ public final class Hash<A> {
    * @return A hash that uses {@link Object#hashCode()}.
    */
   public static <A> Hash<A> anyHash() {
-    return new Hash<A>(new F<A, Integer>() {
-      public Integer f(final A a) {
-        return a.hashCode();
-      }
-    });
+    return new Hash<A>(a -> a.hashCode());
   }
 
   /**
@@ -121,8 +117,8 @@ public final class Hash<A> {
   /**
    * A hash instance for the {@link StringBuffer} type.
    */
-  public static final Hash<StringBuffer> stringBufferHash = new Hash<StringBuffer>(new F<StringBuffer, Integer>() {
-    public Integer f(final StringBuffer sb) {
+  public static final Hash<StringBuffer> stringBufferHash = new Hash<StringBuffer>(
+    sb -> {
       final int p = 419;
       int r = 239;
 
@@ -131,13 +127,13 @@ public final class Hash<A> {
 
       return r;
     }
-  });
+  );
 
   /**
    * A hash instance for the {@link StringBuilder} type.
    */
-  public static final Hash<StringBuilder> stringBuilderHash = new Hash<StringBuilder>(new F<StringBuilder, Integer>() {
-    public Integer f(final StringBuilder sb) {
+  public static final Hash<StringBuilder> stringBuilderHash = new Hash<StringBuilder>(
+    sb -> {
       final int p = 419;
       int r = 239;
 
@@ -146,7 +142,7 @@ public final class Hash<A> {
 
       return r;
     }
-  });
+  );
 
   /**
    * A hash instance for the {@link Either} type.
@@ -156,11 +152,9 @@ public final class Hash<A> {
    * @return A hash instance for the {@link Either} type.
    */
   public static <A, B> Hash<Either<A, B>> eitherHash(final Hash<A> ha, final Hash<B> hb) {
-    return new Hash<Either<A, B>>(new F<Either<A, B>, Integer>() {
-      public Integer f(final Either<A, B> e) {
-        return e.isLeft() ? ha.hash(e.left().value()) : hb.hash(e.right().value());
-      }
-    });
+    return new Hash<Either<A, B>>(
+      e -> e.isLeft() ? ha.hash(e.left().value()) : hb.hash(e.right().value())
+    );
   }
 
   /**
@@ -171,7 +165,7 @@ public final class Hash<A> {
    * @return A hash instance for the {@link Validation} type.
    */
   public static <A, B> Hash<Validation<A, B>> validationHash(final Hash<A> ha, final Hash<B> hb) {
-    return eitherHash(ha, hb).comap(Validation.<A, B>either());
+    return eitherHash(ha, hb).comap(Validation.either());
   }
 
   /**
@@ -181,8 +175,8 @@ public final class Hash<A> {
    * @return A hash instance for the {@link List} type.
    */
   public static <A> Hash<List<A>> listHash(final Hash<A> ha) {
-    return new Hash<List<A>>(new F<List<A>, Integer>() {
-      public Integer f(final List<A> as) {
+    return new Hash<List<A>>(
+      as -> {
         final int p = 419;
         int r = 239;
         List<A> aas = as;
@@ -194,7 +188,7 @@ public final class Hash<A> {
 
         return r;
       }
-    });
+    );
   }
 
   /**
@@ -204,7 +198,7 @@ public final class Hash<A> {
    * @return A hash instance for the {@link NonEmptyList} type.
    */
   public static <A> Hash<NonEmptyList<A>> nonEmptyListHash(final Hash<A> ha) {
-    return listHash(ha).comap(NonEmptyList.<A>toList_());
+    return listHash(ha).comap(NonEmptyList.toList_());
   }
 
   /**
@@ -214,11 +208,9 @@ public final class Hash<A> {
    * @return A hash instance for the {@link Option} type.
    */
   public static <A> Hash<Option<A>> optionHash(final Hash<A> ha) {
-    return new Hash<Option<A>>(new F<Option<A>, Integer>() {
-      public Integer f(final Option<A> o) {
-        return o.isNone() ? 0 : ha.hash(o.some());
-      }
-    });
+    return new Hash<Option<A>>(
+      o -> o.isNone() ? 0 : ha.hash(o.some())
+    );
   }
 
   /**
@@ -228,8 +220,8 @@ public final class Hash<A> {
    * @return A hash instance for the {@link Stream} type.
    */
   public static <A> Hash<Stream<A>> streamHash(final Hash<A> ha) {
-    return new Hash<Stream<A>>(new F<Stream<A>, Integer>() {
-      public Integer f(final Stream<A> as) {
+    return new Hash<Stream<A>>(
+      as -> {
         final int p = 419;
         int r = 239;
         Stream<A> aas = as;
@@ -241,7 +233,7 @@ public final class Hash<A> {
 
         return r;
       }
-    });
+    );
   }
 
   /**
@@ -251,8 +243,8 @@ public final class Hash<A> {
    * @return A hash instance for the {@link Array} type.
    */
   public static <A> Hash<Array<A>> arrayHash(final Hash<A> ha) {
-    return new Hash<Array<A>>(new F<Array<A>, Integer>() {
-      public Integer f(final Array<A> as) {
+    return new Hash<Array<A>>(
+      as -> {
         final int p = 419;
         int r = 239;
 
@@ -262,7 +254,7 @@ public final class Hash<A> {
 
         return r;
       }
-    });
+    );
   }
 
   /**
@@ -272,7 +264,7 @@ public final class Hash<A> {
    * @return A hash instance for the {@link Tree} type.
    */
   public static <A> Hash<Tree<A>> treeHash(final Hash<A> ha) {
-    return streamHash(ha).comap(Tree.<A>flatten_());
+    return streamHash(ha).comap(Tree.flatten_());
   }
 
   /**
@@ -282,7 +274,7 @@ public final class Hash<A> {
    * @return A hash instance for a product-1.
    */
   public static <A> Hash<P1<A>> p1Hash(final Hash<A> ha) {
-    return ha.comap(P1.<A>__1());
+    return ha.comap(P1.__1());
   }
 
   /**
@@ -293,8 +285,8 @@ public final class Hash<A> {
    * @return A hash instance for a product-2.
    */
   public static <A, B> Hash<P2<A, B>> p2Hash(final Hash<A> ha, final Hash<B> hb) {
-    return new Hash<P2<A, B>>(new F<P2<A, B>, Integer>() {
-      public Integer f(final P2<A, B> p2) {
+    return new Hash<>(
+      p2 -> {
         final int p = 419;
         int r = 239;
 
@@ -303,7 +295,7 @@ public final class Hash<A> {
 
         return r;
       }
-    });
+    );
   }
 
   /**
@@ -315,8 +307,8 @@ public final class Hash<A> {
    * @return A hash instance for a product-3.
    */
   public static <A, B, C> Hash<P3<A, B, C>> p3Hash(final Hash<A> ha, final Hash<B> hb, final Hash<C> hc) {
-    return new Hash<P3<A, B, C>>(new F<P3<A, B, C>, Integer>() {
-      public Integer f(final P3<A, B, C> p3) {
+    return new Hash<>(
+      p3 -> {
         final int p = 419;
         int r = 239;
 
@@ -326,7 +318,7 @@ public final class Hash<A> {
 
         return r;
       }
-    });
+    );
   }
 
   /**
@@ -340,8 +332,8 @@ public final class Hash<A> {
    */
   public static <A, B, C, D> Hash<P4<A, B, C, D>> p4Hash(final Hash<A> ha, final Hash<B> hb, final Hash<C> hc,
                                                          final Hash<D> hd) {
-    return new Hash<P4<A, B, C, D>>(new F<P4<A, B, C, D>, Integer>() {
-      public Integer f(final P4<A, B, C, D> p4) {
+    return new Hash<>(
+      p4 -> {
         final int p = 419;
         int r = 239;
 
@@ -352,7 +344,7 @@ public final class Hash<A> {
 
         return r;
       }
-    });
+    );
   }
 
   /**
@@ -367,8 +359,8 @@ public final class Hash<A> {
    */
   public static <A, B, C, D, E> Hash<P5<A, B, C, D, E>> p5Hash(final Hash<A> ha, final Hash<B> hb, final Hash<C> hc,
                                                                final Hash<D> hd, final Hash<E> he) {
-    return new Hash<P5<A, B, C, D, E>>(new F<P5<A, B, C, D, E>, Integer>() {
-      public Integer f(final P5<A, B, C, D, E> p5) {
+    return new Hash<>(
+      p5 -> {
         final int p = 419;
         int r = 239;
 
@@ -380,7 +372,7 @@ public final class Hash<A> {
 
         return r;
       }
-    });
+    );
   }
 
   /**
@@ -397,8 +389,8 @@ public final class Hash<A> {
   public static <A, B, C, D, E, F$> Hash<P6<A, B, C, D, E, F$>> p6Hash(final Hash<A> ha, final Hash<B> hb,
                                                                        final Hash<C> hc, final Hash<D> hd,
                                                                        final Hash<E> he, final Hash<F$> hf) {
-    return new Hash<P6<A, B, C, D, E, F$>>(new F<P6<A, B, C, D, E, F$>, Integer>() {
-      public Integer f(final P6<A, B, C, D, E, F$> p6) {
+    return new Hash<>(
+      p6 -> {
         final int p = 419;
         int r = 239;
 
@@ -411,7 +403,7 @@ public final class Hash<A> {
 
         return r;
       }
-    });
+    );
   }
 
   /**
@@ -430,8 +422,8 @@ public final class Hash<A> {
                                                                              final Hash<C> hc, final Hash<D> hd,
                                                                              final Hash<E> he, final Hash<F$> hf,
                                                                              final Hash<G> hg) {
-    return new Hash<P7<A, B, C, D, E, F$, G>>(new F<P7<A, B, C, D, E, F$, G>, Integer>() {
-      public Integer f(final P7<A, B, C, D, E, F$, G> p7) {
+    return new Hash<>(
+      p7 -> {
         final int p = 419;
         int r = 239;
 
@@ -445,7 +437,7 @@ public final class Hash<A> {
 
         return r;
       }
-    });
+    );
   }
 
   /**
@@ -465,8 +457,8 @@ public final class Hash<A> {
                                                                                    final Hash<C> hc, final Hash<D> hd,
                                                                                    final Hash<E> he, final Hash<F$> hf,
                                                                                    final Hash<G> hg, final Hash<H> hh) {
-    return new Hash<P8<A, B, C, D, E, F$, G, H>>(new F<P8<A, B, C, D, E, F$, G, H>, Integer>() {
-      public Integer f(final P8<A, B, C, D, E, F$, G, H> p8) {
+    return new Hash<>(
+      p8 -> {
         final int p = 419;
         int r = 239;
 
@@ -481,7 +473,7 @@ public final class Hash<A> {
 
         return r;
       }
-    });
+    );
   }
 
   /**
@@ -491,7 +483,7 @@ public final class Hash<A> {
    * @return A hash instance for a vector-2.
    */
   public static <A> Hash<V2<A>> v2Hash(final Hash<A> ea) {
-    return streamHash(ea).comap(V2.<A>toStream_());
+    return streamHash(ea).comap(V2.toStream_());
   }
 
   /**
@@ -501,7 +493,7 @@ public final class Hash<A> {
    * @return A hash instance for a vector-3.
    */
   public static <A> Hash<V3<A>> v3Hash(final Hash<A> ea) {
-    return streamHash(ea).comap(V3.<A>toStream_());
+    return streamHash(ea).comap(V3.toStream_());
   }
 
   /**
@@ -511,7 +503,7 @@ public final class Hash<A> {
    * @return A hash instance for a vector-4.
    */
   public static <A> Hash<V4<A>> v4Hash(final Hash<A> ea) {
-    return streamHash(ea).comap(V4.<A>toStream_());
+    return streamHash(ea).comap(V4.toStream_());
   }
 
   /**
@@ -521,7 +513,7 @@ public final class Hash<A> {
    * @return A hash instance for a vector-5.
    */
   public static <A> Hash<V5<A>> v5Hash(final Hash<A> ea) {
-    return streamHash(ea).comap(V5.<A>toStream_());
+    return streamHash(ea).comap(V5.toStream_());
   }
 
   /**
@@ -531,7 +523,7 @@ public final class Hash<A> {
    * @return A hash instance for a vector-6.
    */
   public static <A> Hash<V6<A>> v6Hash(final Hash<A> ea) {
-    return streamHash(ea).comap(V6.<A>toStream_());
+    return streamHash(ea).comap(V6.toStream_());
   }
 
   /**
@@ -541,7 +533,7 @@ public final class Hash<A> {
    * @return A hash instance for a vector-7.
    */
   public static <A> Hash<V7<A>> v7Hash(final Hash<A> ea) {
-    return streamHash(ea).comap(V7.<A>toStream_());
+    return streamHash(ea).comap(V7.toStream_());
   }
 
   /**
@@ -551,6 +543,6 @@ public final class Hash<A> {
    * @return A hash instance for a vector-8.
    */
   public static <A> Hash<V8<A>> v8Hash(final Hash<A> ea) {
-    return streamHash(ea).comap(V8.<A>toStream_());
+    return streamHash(ea).comap(V8.toStream_());
   }
 }

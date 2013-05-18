@@ -37,29 +37,19 @@ public final class Integers {
   /**
    * Curried Integer subtraction.
    */
-  public static final F<Integer, F<Integer, Integer>> subtract = curry(new F2<Integer, Integer, Integer>() {
-    public Integer f(final Integer x, final Integer y) {
-      return x - y;
-    }
-  });
+  public static final F<Integer, F<Integer, Integer>> subtract = curry(
+    (x, y) -> x - y
+  );
 
   /**
    * Negation.
    */
-  public static final F<Integer, Integer> negate = new F<Integer, Integer>() {
-    public Integer f(final Integer x) {
-      return x * -1;
-    }
-  };
+  public static final F<Integer, Integer> negate = x -> x * -1;
 
   /**
    * Absolute value.
    */
-  public static final F<Integer, Integer> abs = new F<Integer, Integer>() {
-    public Integer f(final Integer x) {
-      return abs(x);
-    }
-  };
+  public static final F<Integer, Integer> abs = x -> abs(x);
 
   /**
    * Remainder.
@@ -82,11 +72,7 @@ public final class Integers {
   /**
    * Evenness.
    */
-  public static final F<Integer, Boolean> even = new F<Integer, Boolean>() {
-    public Boolean f(final Integer i) {
-      return i % 2 == 0;
-    }
-  };
+  public static final F<Integer, Boolean> even = i -> i % 2 == 0;
 
   /**
    * Sums a list of integers.
@@ -114,12 +100,10 @@ public final class Integers {
    * @return A function that converts strings to integers.
    */
   public static F<String, Option<Integer>> fromString() {
-    return new F<String, Option<Integer>>() {
-      public Option<Integer> f(final String s) {
-        try { return some(Integer.valueOf(s)); }
-        catch (final NumberFormatException ignored) {
-          return none();
-        }
+    return s -> {
+      try { return some(Integer.valueOf(s)); }
+      catch (final NumberFormatException ignored) {
+        return none();
       }
     };
   }
@@ -127,36 +111,20 @@ public final class Integers {
   /**
    * A function that returns true if the given integer is greater than zero.
    */
-  public static final F<Integer, Boolean> gtZero = new F<Integer, Boolean>() {
-    public Boolean f(final Integer i) {
-      return i > 0;
-    }
-  };
+  public static final F<Integer, Boolean> gtZero = i -> i > 0;
 
   /**
    * A function that returns true if the given integer is greater than or equal to zero.
    */
-  public static final F<Integer, Boolean> gteZero = new F<Integer, Boolean>() {
-    public Boolean f(final Integer i) {
-      return i >= 0;
-    }
-  };
+  public static final F<Integer, Boolean> gteZero = i -> i >= 0;
 
   /**
    * A function that returns true if the given integer is less than zero.
    */
-  public static final F<Integer, Boolean> ltZero = new F<Integer, Boolean>() {
-    public Boolean f(final Integer i) {
-      return i < 0;
-    }
-  };
+  public static final F<Integer, Boolean> ltZero = i -> i < 0;
 
   /**
-   * A function that returns true if the given integer is less than or equal to zero. 
+   * A function that returns true if the given integer is less than or equal to zero.
    */
-  public static final F<Integer, Boolean> lteZero = new F<Integer, Boolean>() {
-    public Boolean f(final Integer i) {
-      return i <= 0;
-    }
-  };
+  public static final F<Integer, Boolean> lteZero = i -> i <= 0;
 }
