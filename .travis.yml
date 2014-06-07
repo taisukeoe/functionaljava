@@ -1,0 +1,12 @@
+language: java
+
+jdk:
+  - oraclejdk8
+
+env:
+  - JAVA8_HOME=$JAVA_HOME
+
+script:
+  - curl -s get.gvmtool.net | bash
+  - gvm install gradle 2.0-rc-1
+  - gradle test
