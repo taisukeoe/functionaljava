@@ -132,7 +132,8 @@ public final class Rand {
             public Integer f(final Integer to) {
               final int f = min(from, to);
               final int t = max(from, to);
-              return f + seed.map(fr).orSome(new Random()).nextInt(t - f + 1);
+              final int x = Math.abs(t - f);
+              return f + seed.map(fr).orSome(new Random()).nextInt((x == 0 || x == Integer.MIN_VALUE) ? Integer.MAX_VALUE : x);
             }
           };
         }
