@@ -11,5 +11,5 @@ jdk:
 #  - jdk_switcher use oraclejdk8
 #  - export JAVA8_HOME=$JAVA_HOME
 #
-script: ./travis.sh
+#script: ./travis.sh
 
