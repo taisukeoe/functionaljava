@@ -1,15 +1,15 @@
-language: scala
+language: java
 
 sudo: false
 
 jdk:
   - oraclejdk8
 
-before_script: 
-  - jdk_switcher use oraclejdk7
-  - export JAVA7_HOME=$JAVA_HOME
-  - jdk_switcher use oraclejdk8
-  - export JAVA8_HOME=$JAVA_HOME
-
+#before_script: 
+#  - jdk_switcher use oraclejdk7
+#  - export JAVA7_HOME=$JAVA_HOME
+#  - jdk_switcher use oraclejdk8
+#  - export JAVA8_HOME=$JAVA_HOME
+#
 script: ./travis.sh
 
